@@ -27,4 +27,5 @@ Checked this out and found the next part:
 `Part 5: _35844447}`
 
 
-Put it all together and flag is `picoCTF{th4ts_4_l0t_0f_pl4c3s_2_lO0k_35844447}`
+Put it all together and flag is 
+`picoCTF{th4ts_4_l0t_0f_pl4c3s_2_lO0k_35844447}`
