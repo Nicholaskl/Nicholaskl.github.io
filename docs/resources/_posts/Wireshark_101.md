@@ -1,0 +1,228 @@
+---
+layout: post
+title:  "Wireshark 101 | Try Hack Me"
+date:   2021-06-24 18:35:00 +0800
+categories: Res THM
+---
+
+# WireShark 101
+
+## Filtering Captures
+
+```
+and - operator: and / &&
+or - operator: or / ||
+equals - operator: eq / ==
+not equal - operator: ne / !=
+greater than - operator: gt /  >
+less than - operator: lt / <
+```
+
+```
+ip.addr == <IP Address>
+ip.src == <SRC IP Address> and ip.dst == <DST IP Address>
+
+tcp.port eq <Port #> or <Protocol Name>
+udp.port eq <Port #> or <Protocol Name>
+```
+
+
+## Packet Dissection
+
+### Frame - Layer 1
+This shows the frame and any details that are specific to the Physical Layer
+
+### Source [MAC] - Layer 2
+The source and destination MAC addresses that constitute the Data Link Layer
+
+### Source [IP] - Layer 3
+Shows source and destination IPv4 addresses from the Network Layer
+
+### Protocol - Layer 4
+Shows details of protocol used - could be TCP or UDP - and source/destination ports. From the Transport layer
+
+#### Protocol Errors
+This is a subset of the 4th layer - showing reassembling details of segments from TCP
+
+### Application Protocl - Layer 5
+Shows details of the protocol being used - could be HTTP, SMB, FTP - from the Application layer
+
+#### Application Data
+An extension of layer 5, showing any application-specific data
+
+
+## Task 7 - ARP Traffic
+
+Address Resolution Protocol (ARP) occurs on the second layer and deals with matching IP Addresses with MAC addresses. They have a REQUEST and RESPONSE messages. 
+
+The message header has a field 'Opcode' which can contain either: 'Request(1)' or 'Reply(2)' 
+
+Ensure 'View > Name Resolution > Ensure that Resolve Physical Addresses' is checked. Allows Wireshark to attempt to resolve physical addresses.
+
+ARP Request packets can contain a '00:00:00:00:00:00' target MAC address which will mean it will broadcast to all machines.
+
+### What is the Opcode for Packet 6?
+Clicked on the 6th packet and inside Address Resolution Protocol (Request) was the opcode.
+
+request (1)
+
+### What is the source MAC Address of Packet 19?
+Went to the 19th packet. Inside the ARP (request) part was the 'Sender MAC address'
+
+'80:fb:06:f0:45:d7'
+
+### What 4 packets are Reply packets?
+Using the top filter bar, went: 'arp.opcode == 2'
+
+This resulted in '76,400,459,520'
+
+### What IP Address is at 80:fb:06:f0:45:d7?
+Using the top filter bar, went: 'arp.opcode == 2 and eth.src == 80:fb:06:f0:45:d7'.
+
+All 4 of these packets have the following Sender IP address: '10.251.23.1'
+
+
+## Task 8 - ICMP Traffic
+
+Internet Control Message Protocol (ICMP) is used to analyse nodes on a server. Used in utilities such as ping and traceroute. Compromises of a request and reply.
+
+ICMP Requests contain a type and code of the packet, a type 8 usually means request, and 0 is a reply. If these are altered could be suspicious.
+Also contains timestamp which is when the ping was requested and random data.
+
+ICMP Replies are very similar to requests but usually have a code of 0 confirming that it is a reply packet.
+
+### What is the type for packet 4?
+Clicked on packet 4 and looked under 'Internet Control Message Protocol' to find 'Type'
+
+8
+
+### What is the type for packet 5?
+Did the same thing as before for 5.
+
+0 was the type
+
+### What is the timestamp for packet 12, only including month day and year?
+Did the same thing as before but scrolled further down:
+
+'May 30, 2013'
+
+### What is the full data string for packet 18?
+Same thing as before, expanded the 'Data' section at the bottom. Right clicked and went copy value
+
+'08090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f3031323334353637'
+
+
+## TCP Traffic
+
+Trickier to understand as it is a handshake process: 'Syn, syn-ack, ack'. Any other RST or other packets in between may be suspicious. 
+
+Sequence and acknowledgement numbers are important to check out.
+0 may indicate that the port was not open
+
+
+## Task 10 - DNS Traffic
+
+Domain Name Service (DNS) which is used to 'resolve' domain names with IP addresses.
+
+DNS Query contains a first bit of information which could be UDP53 meaning that it passed or TCP 53 which means it could be suspicious.
+
+DNS Response contains an answer to verify the query.
+
+### What is being queried in packet 1?
+Clicked on first packet, expanded Domain Name System (query) and then queries and the one inside of that. Then could fine 'Name' within this.
+8.8.8.8.in-addr.arpa
+
+### What site is being queried in packet 26?
+Exactly same as last one.
+
+'www.wireshark.org '
+
+### What is the Transaction ID for packet 26?
+A little bit higher. just under the DNS (query) container.
+
+'0x2c58'
+
+
+## Task 11 - HTTP Traffic
+
+Hypertext Transfer Protocol (HTML) is commonly used, not as common as HTTPS however. It can contain GET and POST requests to a web server to recieve dta.
+
+Is very simple, doesn't contain handshakes. Information isn't encrypted and so can find the Request URI, File Data and Server.
+
+Can find a useful anaylsis tool by going 'statistics > Protocol Hierarchy'
+Can export a HTTP object by going 'file > Export Object > HTTP'
+Can find all endpoints in a capture by going 'Statistics > Endpoints'
+
+### What percent of packets originate from Domain Name System?
+Got up protocol hierarchy statistics.
+
+Found '4.7'
+
+### What endpoint ends in .237?
+Found endpoint statistics, clicked on IPv4.
+
+Found '145.254.160.237'
+
+### What is the user-agent listed in packet 4?
+Inside the 'Hyptertext Transfer Protocol' category found
+
+'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.6) Gecko/20040113'
+
+### Looking at the data stream what is the full request URI from packet 18?
+It's going to being with 'HTTP://' because it is HTTP
+
+Added on the 'Host' and 'Request URI' afterwards to get the following:
+
+or... be smart and scroll down to the bottom to find 'Full Request URI'
+
+'HTTP://pagead2.googlesyndication.com/pagead/ads?client=ca-pub-2309191948673629&random=1084443430285&lmt=1082467020&format=468x60_as&output=html&url=http%3A%2F%2Fwww.ethereal.com%2Fdownload.html&color_bg=FFFFFF&color_text=333333&color_link=000000&color_url=666633&color_border=666633 '
+
+### What domain name was requested from packet 38?
+Same as above to find 'http://www.ethereal.com/download.html ' so the domain is 'www.etheral.com '
+
+### Looking at the data stream what is the full request URI from packet 38?
+'http://www.ethereal.com/download.html '
+
+
+## Task 12 - HTTPS Traffic
+
+Hypertext Transfer Protocol Secure (HTTPS) is a bit harder to understand.
+
+Before sending encrypted information a secure tunnel must be made:
+1. Client/server both agree on protocol version
+2. Client/server select a cryptographic algorithm
+3. Client and server can authenticate to each other (optional)
+4. Create secure tunnel with public key
+
+There is a 'Client Hello' sent with details. Then a 'Server Hello' which will include sesion details and SSL certification information. Finally a Client Key Exchange Packet will be sent to figure out the public key.
+
+After the server confirming the public key, a secure tunnel will be created and everything after that will need a secret to to decrypt any of the data.
+To do this in Wireshark, go: 'Edit > Preferences > TLS > edit'
+
+In the case of this exercise added a new with the following:
+```
+ip address:	127.0.0.1
+port:		starts_tls
+protocol:	http
+key file: 	/home/kali/Desktop/snakeoil2/rsasnakeoil2.key
+```
+
+### Looking at the data stream what is the full request URI for packet 31?
+Looked inside 'Transmission Control Protocol > Hypertext Transfer Protocol' to find it.
+
+'https://localhost/icons/apache_pb.png'
+
+### Looking at the data stream what is the full request URI for packet 50?
+Same as before:
+
+'https://localhost/icons/back.gif'
+
+### What is the User-Agent listed in packet 50?
+Same as before:
+
+'Mozilla/5.0 (X11; U; Linux i686; fr; rv:1.8.0.2) Gecko/20060308 Firefox/1.5.0.2'
+
+
+## Analysing Exploit PCAP's
+
+Finding an IP address that is using all sorts of protocols and traffic especially in quick suscession may be worth isolating and filtering that IP to investigate.
