@@ -1,26 +1,17 @@
 ---
 layout: default
 ---
+{% for post in site.posts limit:5 %}
+    {% if post.categories contains 'Res' %}
 
-<div class="home">
-    {%- if page.title -%} 
-        <h1 class="page-heading">{{ page.title }}</h1>
-    {%- endif -%}
-
-    {{ content }}
-
-    {% for post in site.posts limit:5 %}
-     {% if post.categories contains 'Res' %}
-
-        <div class="post">
-            <ul>
-            <li><a href="{{ post.url }}">{{ post.title | truncate:200 }} </a><small>{{ post.date }}</small>
-                {% if post.summary %}
-                    <p class="entry">{{ post.summary }}</p>
-                {% endif %}
-            </li>
-            </ul>
-        </div>
-     {% endif %}
-    {% endfor %}
-</div>
+    <div class="post">
+        <ul>
+        <li><a href="{{ post.url }}">{{ post.title | truncate:200 }} </a><small>{{ post.date }}</small>
+            {% if post.summary %}
+                <p class="entry">{{ post.summary }}</p>
+            {% endif %}
+        </li>
+        </ul>
+    </div>
+    {% endif %}
+{% endfor %}
