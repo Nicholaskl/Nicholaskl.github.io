@@ -1,5 +1,5 @@
 ---
 layout: home-ctf
-title: "CTF Home"
+title: "CTF"
 category: CTF
 ---

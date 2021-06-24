@@ -1,5 +1,5 @@
 ---
 layout: home-resources
-title: "Resources Home"
+title: "Resources"
 category: Res
 ---
