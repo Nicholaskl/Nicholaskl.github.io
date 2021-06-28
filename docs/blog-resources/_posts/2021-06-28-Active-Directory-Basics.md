@@ -327,7 +327,7 @@ Azure is the middle service between a phyical Active Directory and what the user
 
 Rest APIs
 
-####What is the Azure AD equivalent of Domains and Forests?
+#### What is the Azure AD equivalent of Domains and Forests?
 
 Tenants
 
