@@ -5,7 +5,6 @@ date:   2021-06-22 10:30:00 +0800
 categories: Res THM
 ---
 
-# Network Services
 
 ## Task 2 - Understanding SMB
 

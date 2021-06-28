@@ -5,7 +5,6 @@ date:   2021-06-22 13:48:00 +0800
 categories: Res THM
 ---
 
-# Network Services 2
 
 ## Task 2 - Understanding NFS
 

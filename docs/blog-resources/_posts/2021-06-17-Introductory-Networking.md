@@ -5,7 +5,6 @@ date:   2021-06-17 13:24:00 +0800
 categories: Res THM
 ---
 
-# Introductory Networking
 
 ## Task 2 - The OSI Model: An Overview
 
